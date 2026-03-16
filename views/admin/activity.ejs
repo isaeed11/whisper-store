@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — سجل النشاطات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;z-index:10}.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border)}.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}.sidebar-nav{flex:1;padding:16px 12px}.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:.3s;margin-bottom:4px}.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center}.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border)}.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.85rem}
+.main{margin-right:260px;flex:1;padding:32px}.page-header{margin-bottom:32px}.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}
+.log-item{display:flex;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:flex-start}.log-item:hover{background:var(--elevated)}
+.log-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.log-info{flex:1}.log-info .action{font-weight:700;font-size:.95rem;margin-bottom:2px}.log-info .details{font-size:.85rem;color:var(--dim)}.log-info .meta{font-size:.75rem;color:var(--muted);margin-top:4px}
+.log-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header"><h1>📋 سجل النشاطات (آخر 100)</h1></div>
+  <div class="log-wrap">
+    <% const icons = { order:'📦', product:'📷', review:'⭐', coupon:'🏷️', settings:'⚙️', customer:'👤', message:'✉️', page:'📄', login:'🔑' }; %>
+    <% activities.forEach(a => { %>
+    <div class="log-item">
+      <div class="log-icon"><%= icons[a.type] || '📋' %></div>
+      <div class="log-info">
+        <div class="action"><%= a.action %></div>
+        <% if (a.details) { %><div class="details"><%= a.details %></div><% } %>
+        <div class="meta"><%= a.actor %> — <%= new Date(a.createdAt).toLocaleDateString('ar-SA') %> <%= new Date(a.createdAt).toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></div>
+      </div>
+    </div>
+    <% }) %>
+    <% if (!activities.length) { %><div style="text-align:center;padding:60px;color:var(--dim);">لا توجد نشاطات مسجلة بعد</div><% } %>
+  </div>
+</div>
+</body></html>

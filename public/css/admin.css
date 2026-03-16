@@ -1,0 +1,25 @@
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--warning:#d4a843;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+
+/* Sidebar */
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;z-index:10;overflow:hidden}
+.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}
+.sidebar-nav{flex:1;padding:12px;overflow-y:auto;overflow-x:hidden}
+.sidebar-nav::-webkit-scrollbar{width:3px}.sidebar-nav::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+.sidebar-nav a{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.85rem;font-weight:500;transition:.3s;margin-bottom:2px;white-space:nowrap}
+.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}
+.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}
+.sidebar-nav a .icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.sidebar-nav a .badge-nav{margin-right:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:8px;font-weight:700}
+.sidebar-bottom{padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0}
+.sidebar-bottom p{font-size:.75rem;color:var(--muted);margin-bottom:6px}
+.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.8rem}
+
+/* Main */
+.main{margin-right:260px;flex:1;padding:32px;min-height:100vh}
+.page-header{margin-bottom:32px}
+.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}
+.page-header p{color:var(--dim);font-size:.9rem;margin-top:4px}
+
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}}

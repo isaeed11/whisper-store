@@ -1,0 +1,22 @@
+<div class="sidebar">
+  <div class="sidebar-logo">WHISPER<span>لوحة التحكم</span></div>
+  <nav class="sidebar-nav">
+    <a href="/admin" class="<%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>"><span class="icon">📊</span> الرئيسية</a>
+    <a href="/admin/products" class="<%= typeof activePage !== 'undefined' && activePage === 'products' ? 'active' : '' %>"><span class="icon">📷</span> المعدات</a>
+    <a href="/admin/orders" class="<%= typeof activePage !== 'undefined' && activePage === 'orders' ? 'active' : '' %>"><span class="icon">📦</span> الطلبات</a>
+    <a href="/admin/coupons" class="<%= typeof activePage !== 'undefined' && activePage === 'coupons' ? 'active' : '' %>"><span class="icon">🏷️</span> الكوبونات</a>
+    <a href="/admin/customers" class="<%= typeof activePage !== 'undefined' && activePage === 'customers' ? 'active' : '' %>"><span class="icon">👥</span> الأعضاء</a>
+    <a href="/admin/reports" class="<%= typeof activePage !== 'undefined' && activePage === 'reports' ? 'active' : '' %>"><span class="icon">📈</span> التقارير</a>
+    <a href="/admin/pages" class="<%= typeof activePage !== 'undefined' && activePage === 'pages' ? 'active' : '' %>"><span class="icon">📄</span> الصفحات</a>
+    <a href="/admin/activity" class="<%= typeof activePage !== 'undefined' && activePage === 'activity' ? 'active' : '' %>"><span class="icon">📋</span> سجل النشاطات</a>
+    <a href="/admin/reviews" class="<%= typeof activePage !== 'undefined' && activePage === 'reviews' ? 'active' : '' %>"><span class="icon">⭐</span> التقييمات</a>
+    <a href="/admin/messages" class="<%= typeof activePage !== 'undefined' && activePage === 'messages' ? 'active' : '' %>"><span class="icon">✉️</span> الرسائل</a>
+    <a href="/admin/appearance" class="<%= typeof activePage !== 'undefined' && activePage === 'appearance' ? 'active' : '' %>"><span class="icon">🎨</span> تخصيص الواجهة</a>
+    <a href="/admin/settings" class="<%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'active' : '' %>"><span class="icon">⚙️</span> إعدادات الموقع</a>
+    <a href="/" target="_blank"><span class="icon">🌐</span> عرض المتجر</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:8px;">مرحباً، <%= typeof adminName !== 'undefined' ? adminName : '' %></p>
+    <a href="/admin/logout">🚪 تسجيل الخروج</a>
+  </div>
+</div>

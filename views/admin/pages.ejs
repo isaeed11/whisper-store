@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — إدارة الصفحات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;z-index:10}.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border)}.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}.sidebar-nav{flex:1;padding:16px 12px}.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:.3s;margin-bottom:4px}.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center}.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border)}.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.85rem}
+.main{margin-right:260px;flex:1;padding:32px}.page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}
+.btn{padding:10px 24px;border-radius:60px;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:600;border:none;cursor:pointer;transition:.3s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}.btn-accent{background:var(--accent);color:var(--bg)}.btn-accent:hover{background:#e0c9a6}.btn-danger{background:rgba(199,80,80,.15);color:var(--danger);border:1px solid rgba(199,80,80,.3)}.btn-sm{padding:6px 16px;font-size:.8rem;border-radius:6px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}.modal-bg.show{display:flex}.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:32px}.modal h3{font-family:'Noto Kufi Arabic',serif;font-size:1.2rem;font-weight:700;margin-bottom:24px}
+.form-group{margin-bottom:16px}.form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--dim);margin-bottom:6px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;outline:none}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hint{font-size:.75rem;color:var(--muted);margin-top:4px}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer;margin-bottom:8px}
+.page-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:.3s}.page-card:hover{border-color:rgba(200,169,126,.3)}
+.page-card h4{font-size:1.1rem;font-weight:700;margin-bottom:4px}.page-card .slug{font-size:.8rem;color:var(--accent);direction:ltr;display:inline-block;margin-bottom:8px}
+.page-card .preview{font-size:.85rem;color:var(--dim);max-height:60px;overflow:hidden;margin-bottom:12px}
+.badge{padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:700;margin-left:8px}.badge-ok{background:rgba(109,181,109,.15);color:var(--success)}.badge-no{background:rgba(199,80,80,.15);color:var(--danger)}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header">
+    <h1>📄 الصفحات المخصصة (<%= pages.length %>)</h1>
+    <button class="btn btn-accent" onclick="document.getElementById('addModal').classList.add('show')">+ صفحة جديدة</button>
+  </div>
+  <p style="color:var(--dim);font-size:.9rem;margin-bottom:24px;">أنشئ صفحات إضافية مثل سياسة الخصوصية، الأسئلة الشائعة، أو أي محتوى تبيه. الصفحات تظهر تلقائياً بالمتجر.</p>
+
+  <% pages.forEach(p => { %>
+  <div class="page-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <h4><%= p.title %> <span class="badge <%= p.active ? 'badge-ok' : 'badge-no' %>"><%= p.active ? 'منشورة' : 'مخفية' %></span></h4>
+        <div class="slug">/page/<%= p.slug %></div>
+        <% if (p.showInNav) { %><span style="font-size:.75rem;color:var(--accent);">📌 ظاهرة بالنافبار</span><% } %>
+        <% if (p.showInFooter) { %><span style="font-size:.75rem;color:var(--dim);margin-right:8px;">📎 ظاهرة بالفوتر</span><% } %>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-accent" onclick="openEdit('<%= p._id %>',`<%= p.title %>`,`<%= p.content.replace(/`/g,'\\`') %>`,<%= p.showInNav %>,<%= p.showInFooter %>,<%= p.active %>)">تعديل</button>
+        <form method="POST" action="/admin/pages/<%= p._id %>/delete" style="display:inline;" onsubmit="return confirm('متأكد من الحذف؟')"><button type="submit" class="btn btn-sm btn-danger">حذف</button></form>
+      </div>
+    </div>
+    <div class="preview"><%= p.content.substring(0, 150) %>...</div>
+  </div>
+  <% }) %>
+
+  <% if (!pages.length) { %><div style="text-align:center;padding:60px;color:var(--dim);"><p style="font-size:3rem;margin-bottom:16px;">📄</p><p>لا توجد صفحات — أنشئ أول صفحة مثل "سياسة الخصوصية"</p></div><% } %>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-bg" id="addModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3>➕ صفحة جديدة</h3>
+    <form method="POST" action="/admin/pages">
+      <div class="form-row">
+        <div class="form-group"><label>عنوان الصفحة</label><input name="title" required placeholder="مثال: سياسة الخصوصية"></div>
+        <div class="form-group"><label>الرابط (slug)</label><input name="slug" required placeholder="مثال: privacy-policy" style="direction:ltr;text-align:right;"><div class="hint">أحرف إنجليزية وأرقام فقط مع شرطات</div></div>
+      </div>
+      <div class="form-group"><label>المحتوى</label><textarea name="content" rows="10" required placeholder="اكتب محتوى الصفحة هنا..."></textarea></div>
+      <label class="checkbox-label"><input type="checkbox" name="showInNav"> إظهار في النافبار</label>
+      <label class="checkbox-label"><input type="checkbox" name="showInFooter" checked> إظهار في الفوتر</label>
+      <button type="submit" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:8px;">إنشاء الصفحة</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-bg" id="editModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3>✏️ تعديل الصفحة</h3>
+    <form method="POST" id="editForm">
+      <div class="form-group"><label>عنوان الصفحة</label><input name="title" id="eTitle" required></div>
+      <div class="form-group"><label>المحتوى</label><textarea name="content" id="eContent" rows="10" required></textarea></div>
+      <label class="checkbox-label"><input type="checkbox" name="showInNav" id="eNav"> إظهار في النافبار</label>
+      <label class="checkbox-label"><input type="checkbox" name="showInFooter" id="eFooter"> إظهار في الفوتر</label>
+      <label class="checkbox-label"><input type="checkbox" name="active" id="eActive"> منشورة</label>
+      <button type="submit" class="btn btn-accent" style="width:100%;justify-content:center;margin-top:8px;">حفظ التعديلات</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openEdit(id, title, content, nav, footer, active) {
+  document.getElementById('editForm').action = '/admin/pages/' + id + '/update';
+  document.getElementById('eTitle').value = title;
+  document.getElementById('eContent').value = content;
+  document.getElementById('eNav').checked = nav;
+  document.getElementById('eFooter').checked = footer;
+  document.getElementById('eActive').checked = active;
+  document.getElementById('editModal').classList.add('show');
+}
+</script>
+</body></html>

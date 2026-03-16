@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — إدارة المنتجات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;}
+.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border);}
+.sidebar-logo span{display:block;font-size:0.65rem;font-weight:400;color:var(--dim);}
+.sidebar-nav{flex:1;padding:16px 12px;}
+.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:0.9rem;font-weight:500;transition:0.3s;margin-bottom:4px;}
+.sidebar-nav a:hover{background:var(--elevated);color:var(--text);}
+.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700;}
+.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center;}
+.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border);}
+.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:0.85rem;}
+.main{margin-right:260px;flex:1;padding:32px;}
+.page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800;}
+.btn{padding:10px 24px;border-radius:60px;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:600;border:none;cursor:pointer;transition:0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-accent{background:var(--accent);color:var(--bg);}
+.btn-accent:hover{background:#e0c9a6;}
+.btn-danger{background:rgba(199,80,80,0.15);color:var(--danger);border:1px solid rgba(199,80,80,0.3);}
+.btn-danger:hover{background:rgba(199,80,80,0.25);}
+.btn-sm{padding:6px 16px;font-size:0.8rem;border-radius:6px;}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:32px;}
+.modal h3{font-family:'Noto Kufi Arabic',serif;font-size:1.2rem;font-weight:700;margin-bottom:24px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:0.85rem;font-weight:600;color:var(--dim);margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.9rem;outline:none;transition:0.3s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:0.9rem;cursor:pointer;margin-bottom:8px;}
+
+/* Image Upload */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:0.3s;position:relative;overflow:hidden;}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-glow);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-zone .icon{font-size:2.5rem;margin-bottom:8px;}
+.upload-zone p{color:var(--dim);font-size:0.85rem;}
+.upload-zone p strong{color:var(--accent);}
+.upload-preview{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
+
+/* Products Grid */
+.products-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.p-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:0.3s;}
+.p-card:hover{border-color:rgba(200,169,126,0.3);}
+.p-card-img{width:100%;height:180px;object-fit:cover;background:var(--elevated);display:flex;align-items:center;justify-content:center;}
+.p-card-img img{width:100%;height:100%;object-fit:cover;}
+.p-card-img .emoji{font-size:3.5rem;}
+.p-card-body{padding:20px;}
+.p-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.p-card h4{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.p-card .specs{font-size:0.8rem;color:var(--dim);margin-bottom:6px;}
+.p-card .desc{font-size:0.83rem;color:var(--muted);margin-bottom:12px;}
+.p-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);}
+.p-card-price{font-family:'Noto Kufi Arabic',serif;font-size:1.2rem;font-weight:800;color:var(--accent);}
+.p-card-price small{font-size:0.7rem;font-weight:400;color:var(--dim);}
+.p-card-actions{display:flex;gap:8px;}
+.badge-a{padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:700;}
+.badge-ok{background:rgba(109,181,109,0.15);color:var(--success);}
+.badge-no{background:rgba(199,80,80,0.15);color:var(--danger);}
+.bookings-count{font-size:0.75rem;color:var(--dim);margin-top:4px;}
+
+@media(max-width:768px){.sidebar{display:none;}.main{margin-right:0;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header">
+    <h1>📷 إدارة المنتجات (<%= products.length %>)</h1>
+    <button class="btn btn-accent" onclick="document.getElementById('addModal').classList.add('show')">+ إضافة منتج</button>
+  </div>
+
+  <div class="products-admin">
+    <% products.forEach(p => { %>
+    <div class="p-card">
+      <div class="p-card-img">
+        <% if (p.image) { %>
+          <img src="<%= p.image %>" alt="<%= p.name %>">
+        <% } else { %>
+          <span class="emoji"><%= p.icon %></span>
+        <% } %>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-head">
+          <div>
+            <span class="badge-a <%= p.available ? 'badge-ok' : 'badge-no' %>"><%= p.available ? 'متاح' : 'محجوز' %></span>
+            <% if(p.featured) { %><span class="badge-a" style="background:var(--accent-glow);color:var(--accent);margin-right:4px;">مميز</span><% } %>
+          </div>
+        </div>
+        <h4><%= p.name %></h4>
+        <div class="specs"><%= p.specs %></div>
+        <div class="desc"><%= p.description %></div>
+        <% if(p.bookings && p.bookings.length > 0) { %>
+          <div class="bookings-count">📅 <%= p.bookings.length %> حجز نشط</div>
+        <% } %>
+        <div class="p-card-footer">
+          <div class="p-card-price"><%= p.pricePerDay %> ر.س <small>/يوم</small></div>
+          <div class="p-card-actions">
+            <button class="btn btn-sm btn-accent" onclick='openEdit(<%- JSON.stringify({id:p._id.toString(),name:p.name,cat:p.category,icon:p.icon,specs:p.specs,desc:p.description,price:p.pricePerDay,deposit:p.deposit,avail:p.available,feat:p.featured,image:p.image||""}) %>)'>تعديل</button>
+            <form method="POST" action="/admin/products/<%= p._id %>/delete" style="display:inline;" onsubmit="return confirm('متأكد من الحذف؟')">
+              <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-bg" id="addModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3>➕ إضافة منتج جديد</h3>
+    <form method="POST" action="/admin/products" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>صورة المنتج</label>
+        <div class="upload-zone" id="addUploadZone">
+          <div class="icon">📸</div>
+          <p>اسحب الصورة هنا أو <strong>اضغط للاختيار</strong></p>
+          <p style="font-size:0.75rem;margin-top:4px;">JPG, PNG, WebP — حد أقصى 10MB</p>
+          <input type="file" name="image" accept="image/*" onchange="previewImage(this, 'addPreview')">
+          <img id="addPreview" class="upload-preview">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>اسم المنتج</label><input name="name" required placeholder="مثال: Sony A7 IV"></div>
+        <input type="hidden" name="category" value="equipment">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>أيقونة (بديل عن الصورة)</label><input name="icon" value="📷" placeholder="📷 أو 🔭"></div>
+        <div class="form-group"><label>المواصفات</label><input name="specs" required placeholder="Full Frame | 33MP | 4K60"></div>
+      </div>
+      <div class="form-group"><label>الوصف</label><textarea name="description" rows="2" required placeholder="وصف المنتج..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>السعر/يوم (ر.س)</label><input type="number" name="pricePerDay" required min="1"></div>
+        <div class="form-group"><label>التأمين (ر.س)</label><input type="number" name="deposit" value="200"></div>
+      </div>
+      <label class="checkbox-label"><input type="checkbox" name="featured"> منتج مميز (يظهر في الرئيسية)</label>
+      <br>
+      <button type="submit" class="btn btn-accent" style="width:100%;justify-content:center;">حفظ المنتج</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-bg" id="editModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3>✏️ تعديل المنتج</h3>
+    <form method="POST" id="editForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>صورة المنتج</label>
+        <div class="upload-zone">
+          <div class="icon">📸</div>
+          <p>اسحب صورة جديدة أو <strong>اضغط للاختيار</strong></p>
+          <input type="file" name="image" accept="image/*" onchange="previewImage(this, 'editPreview')">
+          <img id="editPreview" class="upload-preview">
+        </div>
+        <p id="currentImgText" style="font-size:0.8rem;color:var(--dim);margin-top:8px;"></p>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>اسم المنتج</label><input name="name" id="eName" required></div>
+        <input type="hidden" name="category" value="equipment">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>الأيقونة</label><input name="icon" id="eIcon"></div>
+        <div class="form-group"><label>المواصفات</label><input name="specs" id="eSpecs" required></div>
+      </div>
+      <div class="form-group"><label>الوصف</label><textarea name="description" id="eDesc" rows="2" required></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>السعر/يوم</label><input type="number" name="pricePerDay" id="ePrice" required></div>
+        <div class="form-group"><label>التأمين</label><input type="number" name="deposit" id="eDeposit"></div>
+      </div>
+      <label class="checkbox-label"><input type="checkbox" name="available" id="eAvail"> متاح للتأجير</label>
+      <label class="checkbox-label"><input type="checkbox" name="featured" id="eFeat"> منتج مميز</label>
+      <br>
+      <button type="submit" class="btn btn-accent" style="width:100%;justify-content:center;">حفظ التعديلات</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function previewImage(input, previewId) {
+  const preview = document.getElementById(previewId);
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function openEdit(p){
+  document.getElementById('editForm').action='/admin/products/'+p.id+'/update';
+  document.getElementById('eName').value=p.name;
+  document.getElementById('eIcon').value=p.icon;
+  document.getElementById('eSpecs').value=p.specs;
+  document.getElementById('eDesc').value=p.desc;
+  document.getElementById('ePrice').value=p.price;
+  document.getElementById('eDeposit').value=p.deposit;
+  document.getElementById('eAvail').checked=p.avail;
+  document.getElementById('eFeat').checked=p.feat;
+  const preview = document.getElementById('editPreview');
+  const imgText = document.getElementById('currentImgText');
+  if(p.image) {
+    preview.src = p.image; preview.style.display = 'block';
+    imgText.textContent = '📷 صورة حالية — ارفع جديدة للتغيير';
+  } else {
+    preview.style.display = 'none';
+    imgText.textContent = 'لا توجد صورة حالياً';
+  }
+  document.getElementById('editModal').classList.add('show');
+}
+</script>
+</body>
+</html>

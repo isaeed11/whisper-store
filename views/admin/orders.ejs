@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — إدارة الطلبات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--warning:#d4a843;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;}
+.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border);}
+.sidebar-logo span{display:block;font-size:0.65rem;font-weight:400;color:var(--dim);}
+.sidebar-nav{flex:1;padding:16px 12px;}
+.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:0.9rem;font-weight:500;transition:0.3s;margin-bottom:4px;}
+.sidebar-nav a:hover{background:var(--elevated);color:var(--text);}
+.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700;}
+.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center;}
+.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border);}
+.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:0.85rem;}
+.main{margin-right:260px;flex:1;padding:32px;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800;}
+.filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.filter-btn{padding:8px 20px;border-radius:30px;background:var(--elevated);border:1px solid var(--border);color:var(--dim);font-family:'Tajawal',sans-serif;font-size:0.85rem;cursor:pointer;transition:0.3s;text-decoration:none;}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:0.3s;}
+.order-card:hover{border-color:rgba(200,169,126,0.3);}
+.order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
+.order-id{font-family:'Noto Kufi Arabic',serif;font-weight:800;font-size:1.1rem;direction:ltr;}
+.status-badge{padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;}
+.status-pending{background:rgba(212,168,67,0.15);color:var(--warning);}
+.status-confirmed{background:rgba(109,181,109,0.15);color:var(--success);}
+.status-active{background:rgba(100,160,255,0.15);color:#64a0ff;}
+.status-returned{background:rgba(200,169,126,0.15);color:var(--accent);}
+.status-cancelled{background:rgba(199,80,80,0.15);color:var(--danger);}
+.order-customer{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;padding:16px;background:var(--elevated);border-radius:10px;}
+.order-customer div{font-size:0.85rem;}
+.order-customer div span{color:var(--dim);display:block;font-size:0.75rem;margin-bottom:2px;}
+.order-items{margin-bottom:16px;}
+.order-items table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+.order-items th{text-align:right;padding:10px 12px;color:var(--dim);font-weight:600;border-bottom:1px solid var(--border);}
+.order-items td{padding:10px 12px;border-bottom:1px solid var(--border);}
+.order-total{font-family:'Noto Kufi Arabic',serif;font-weight:800;color:var(--accent);font-size:1.1rem;}
+.order-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.order-actions select{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.85rem;}
+.btn-sm{padding:8px 20px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:0.85rem;font-weight:600;border:none;cursor:pointer;transition:0.3s;}
+.btn-accent{background:var(--accent);color:var(--bg);}
+.btn-accent:hover{background:#e0c9a6;}
+.btn-danger{background:rgba(199,80,80,0.15);color:var(--danger);border:1px solid rgba(199,80,80,0.3);}
+.empty{text-align:center;padding:60px;color:var(--dim);}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-right:0;}}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;"><h1>📦 إدارة الطلبات</h1><a href="/admin/orders/new" class="filter-btn" style="background:var(--accent);color:var(--bg);border-color:var(--accent);text-decoration:none;">+ طلب يدوي جديد</a></div>
+
+  <div class="filters">
+    <a href="/admin/orders" class="filter-btn <%= !currentStatus ? 'active' : '' %>">الكل</a>
+    <a href="/admin/orders?status=pending" class="filter-btn <%= currentStatus === 'pending' ? 'active' : '' %>">بانتظار التأكيد</a>
+    <a href="/admin/orders?status=confirmed" class="filter-btn <%= currentStatus === 'confirmed' ? 'active' : '' %>">مؤكد</a>
+    <a href="/admin/orders?status=active" class="filter-btn <%= currentStatus === 'active' ? 'active' : '' %>">نشط</a>
+    <a href="/admin/orders?status=returned" class="filter-btn <%= currentStatus === 'returned' ? 'active' : '' %>">مُرجع</a>
+    <a href="/admin/orders?status=cancelled" class="filter-btn <%= currentStatus === 'cancelled' ? 'active' : '' %>">ملغي</a>
+  </div>
+
+  <% if (orders.length === 0) { %>
+    <div class="empty"><p style="font-size:3rem;margin-bottom:16px;">📦</p><p>لا توجد طلبات</p></div>
+  <% } %>
+
+  <% orders.forEach(order => { %>
+  <div class="order-card">
+    <div class="order-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="order-id"><%= order.orderId %></span>
+        <span class="status-badge status-<%= order.status %>">
+          <%= order.status === 'pending' ? 'بانتظار التأكيد' : order.status === 'confirmed' ? 'مؤكد' : order.status === 'active' ? 'نشط' : order.status === 'returned' ? 'مُرجع' : 'ملغي' %>
+        </span>
+        <% if (order.paymentStatus) { %>
+        <span class="status-badge" style="background:<%= order.paymentStatus === 'paid' ? 'rgba(109,181,109,0.15)' : order.paymentStatus === 'pending' ? 'rgba(212,168,67,0.15)' : 'rgba(199,80,80,0.15)' %>;color:<%= order.paymentStatus === 'paid' ? 'var(--success)' : order.paymentStatus === 'pending' ? '#d4a843' : 'var(--danger)' %>;">
+          💳 <%= order.paymentStatus === 'paid' ? 'مدفوع' : order.paymentStatus === 'pending' ? 'بانتظار الدفع' : order.paymentStatus === 'unpaid' ? 'غير مدفوع' : order.paymentStatus === 'cancelled' ? 'دفع ملغي' : order.paymentStatus %>
+        </span>
+        <% } %>
+      </div>
+      <span style="color:var(--dim);font-size:0.85rem;"><%= new Date(order.createdAt).toLocaleDateString('ar-SA') %></span>
+    </div>
+
+    <div class="order-customer">
+      <div><span>العميل</span><strong><%= order.customer.name %></strong></div>
+      <div><span>الجوال</span><strong style="direction:ltr;"><%= order.customer.phone %></strong></div>
+      <div><span>الإيميل</span><strong><%= order.customer.email || '—' %></strong></div>
+      <div><span>الهوية</span><strong><%= order.customer.nationalId || '—' %></strong></div>
+    </div>
+
+    <div class="order-items">
+      <table>
+        <thead><tr><th>المنتج</th><th>الاستلام</th><th>الإرجاع</th><th>الأيام</th><th>السعر/يوم</th><th>التأمين</th><th>المجموع</th></tr></thead>
+        <tbody>
+          <% order.items.forEach(item => { %>
+          <tr>
+            <td><strong><%= item.productName %></strong></td>
+            <td style="color:var(--success);font-weight:600;"><%= item.startDate ? new Date(item.startDate).toLocaleDateString("ar-SA") : "—" %></td>
+            <td style="color:var(--danger);font-weight:600;"><%= item.endDate ? new Date(item.endDate).toLocaleDateString("ar-SA") : "—" %></td>
+            <td style="color:var(--success);font-weight:600;"><%= item.startDate ? new Date(item.startDate).toLocaleDateString('ar-SA') : '—' %></td>
+            <td style="color:var(--danger);font-weight:600;"><%= item.endDate ? new Date(item.endDate).toLocaleDateString('ar-SA') : '—' %></td>
+            <td><%= item.days %></td>
+            <td><%= item.pricePerDay %> ر.س</td>
+            <td><%= item.deposit %> ر.س</td>
+            <td style="font-weight:700;"><%= item.total + item.deposit %> ر.س</td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div style="text-align:left;padding:12px;"><span class="order-total">الإجمالي: <%= order.totalAmount + order.totalDeposit %> ر.س</span></div>
+    </div>
+
+    <form method="POST" action="/admin/orders/<%= order._id %>/status" class="order-actions">
+      <select name="status">
+        <option value="pending" <%= order.status==='pending'?'selected':'' %>>بانتظار التأكيد</option>
+        <option value="confirmed" <%= order.status==='confirmed'?'selected':'' %>>مؤكد</option>
+        <option value="active" <%= order.status==='active'?'selected':'' %>>نشط</option>
+        <option value="returned" <%= order.status==='returned'?'selected':'' %>>مُرجع</option>
+        <option value="cancelled" <%= order.status==='cancelled'?'selected':'' %>>ملغي</option>
+      </select>
+      <button type="submit" class="btn-sm btn-accent">تحديث</button>
+      <form method="POST" action="/admin/orders/<%= order._id %>/delete" style="display:inline;" onsubmit="return confirm('متأكد من الحذف؟')">
+        <button type="submit" class="btn-sm btn-danger">حذف</button>
+      </form>
+    </form>
+  </div>
+  <% }) %>
+</div>
+</body>
+</html>

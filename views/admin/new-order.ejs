@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — طلب جديد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--border:rgba(200,169,126,0.12);--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column}.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border)}.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}.sidebar-nav{flex:1;padding:16px 12px}.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:.3s;margin-bottom:4px}.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center}.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border)}.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.85rem}
+.main{margin-right:260px;flex:1;padding:32px}.page-header{margin-bottom:32px}.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:600px}
+.form-group{margin-bottom:20px}.form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--dim);margin-bottom:8px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;outline:none}.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.btn{padding:14px 36px;border-radius:60px;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:.3s;border:none;width:100%;text-align:center}.btn-accent{background:var(--accent);color:var(--bg)}.btn-accent:hover{background:#e0c9a6}
+.section-title{font-family:'Noto Kufi Arabic',serif;font-size:1rem;font-weight:700;margin:24px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header"><h1>📝 إنشاء طلب يدوي</h1><p style="color:var(--dim);margin-top:4px">لإضافة طلب وصل عن طريق واتساب أو هاتف</p></div>
+  <div class="form-card">
+    <form method="POST" action="/admin/orders/new">
+      <div class="section-title">👤 بيانات العميل</div>
+      <div class="form-group"><label>اسم العميل *</label><input name="customerName" required placeholder="الاسم الكامل"></div>
+      <div class="form-row">
+        <div class="form-group"><label>رقم الجوال *</label><input name="customerPhone" required placeholder="+966" style="direction:ltr;text-align:right"></div>
+        <div class="form-group"><label>الإيميل</label><input name="customerEmail" type="email" placeholder="اختياري" style="direction:ltr;text-align:right"></div>
+      </div>
+
+      <div class="section-title">📷 تفاصيل الحجز</div>
+      <div class="form-group"><label>المعدة *</label>
+        <select name="productId" required>
+          <option value="">— اختر المعدة —</option>
+          <% products.forEach(p => { %>
+          <option value="<%= p._id %>"><%= p.name %> — <%= p.pricePerDay %> ر.س/يوم</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>تاريخ الاستلام *</label><input type="date" name="startDate" required></div>
+        <div class="form-group"><label>تاريخ الإرجاع *</label><input type="date" name="endDate" required></div>
+      </div>
+
+      <div class="section-title">💳 الدفع</div>
+      <div class="form-group"><label>طريقة الدفع</label>
+        <select name="paymentMethod">
+          <option value="cash">دفع عند الاستلام</option>
+          <option value="bank">تحويل بنكي</option>
+          <option value="card">بطاقة ائتمانية</option>
+          <option value="stc">STC Pay</option>
+        </select>
+      </div>
+      <div class="form-group"><label>ملاحظات</label><textarea name="adminNotes" rows="2" placeholder="ملاحظات إضافية..."></textarea></div>
+      <button type="submit" class="btn btn-accent">✓ إنشاء الطلب</button>
+    </form>
+  </div>
+</div>
+</body></html>

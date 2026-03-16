@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= page.title %> — <%= settings.siteName %></title>
+<meta name="description" content="<%= page.title %> - <%= settings.siteName %>">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/store.css">
+<style>:root{--accent:<%= settings.accentColor %>;--bg:<%= settings.bgColor %>;--bg-card:<%= settings.cardColor %>;--text:<%= settings.textColor %>;--accent-glow:<%= settings.accentColor %>26;--accent-bright:<%= settings.accentColor %>;}</style>
+</head>
+<body>
+<nav id="navbar" style="position:relative;">
+  <div class="nav-logo" onclick="location.href='/'"><% if (settings.logoType === 'image' && settings.logoImage) { %><img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" style="max-height:40px;"><% } else { %><%= settings.logoText || settings.siteName %><span><%= settings.siteTagline %></span><% } %></div>
+  <div class="nav-links">
+    <a href="/">الرئيسية</a>
+    <% pages.filter(p => p.showInNav).forEach(p => { %><a href="/page/<%= p.slug %>" class="<%= p.slug === page.slug ? 'active' : '' %>"><%= p.title %></a><% }) %>
+  </div>
+</nav>
+
+<section style="padding-top:40px;">
+  <div class="section-header"><div class="tag">✦ <%= page.title %></div><h2><%= page.title %></h2></div>
+  <div style="max-width:800px;margin:0 auto;color:var(--text-dim);font-size:1rem;line-height:2;"><%- page.content.replace(/\n/g, '<br>') %></div>
+</section>
+
+<footer>
+  <div class="footer-logo"><%= settings.logoText || settings.siteName %></div>
+  <div class="footer-links">
+    <a href="/">الرئيسية</a>
+    <% pages.filter(p => p.showInFooter).forEach(p => { %><a href="/page/<%= p.slug %>"><%= p.title %></a><% }) %>
+  </div>
+  <p><%= settings.footerText %></p>
+</footer>
+</body></html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.seoTitle %></title>
+<meta name="description" content="<%= settings.seoDescription %>">
+<meta name="keywords" content="<%= settings.seoKeywords %>">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://whisper-rental.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="<%= settings.seoTitle %>">
+<meta property="og:description" content="<%= settings.seoDescription %>">
+<meta property="og:locale" content="ar_SA">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/store.css">
+<style>:root{--accent:<%= settings.accentColor %>;--bg:<%= settings.bgColor %>;--bg-card:<%= settings.cardColor %>;--text:<%= settings.textColor %>;--accent-glow:<%= settings.accentColor %>26;--accent-bright:<%= settings.accentColor %>;}</style>
+</head>
+<body>
+<div id="loader"><div class="logo-load">WHISPER</div><div class="bar"></div></div>
+
+<% if (settings.announcementBar) { %><div class="announce-bar" id="announceBar"><%= settings.announcementBar %> <button onclick="this.parentElement.remove();document.documentElement.style.setProperty('--nav-top','0px')" style="background:none;border:none;color:inherit;cursor:pointer;margin-right:12px;font-size:1.1rem;">✕</button></div><% } %>
+
+<nav id="navbar" style="top:<%= settings.announcementBar ? '38px' : '0' %>">
+  <div class="nav-logo" onclick="navigateTo('home')"><% if (settings.logoType === 'image' && settings.logoImage) { %><img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" style="max-height:40px;"><% } else { %><%= settings.logoText || settings.siteName %><span><%= settings.siteTagline %></span><% } %></div>
+  <div class="nav-links" id="navLinks">
+    <% settings.navLinks.filter(l => l.visible).sort((a,b) => a.order - b.order).forEach(link => { %>
+      <% if (link.page === 'external' && link.url) { %>
+        <a href="<%= link.url %>" target="_blank"><%= link.label %></a>
+      <% } else if (link.page && link.page.startsWith('page-')) { %>
+        <a href="/page/<%= link.page.replace('page-','') %>"><%= link.label %></a>
+      <% } else { %>
+        <a href="#" onclick="navigateTo('<%= link.page %>')" data-page="<%= link.page %>" class="<%= link.page === 'home' ? 'active' : '' %>"><%= link.label %></a>
+      <% } %>
+    <% }) %>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="cart-btn" onclick="openAccountOrLogin()" id="accountBtn" title="حسابي">👤</button>
+    <button class="cart-btn" onclick="toggleCart()">🛒<span class="cart-badge" id="cartBadge">0</span></button>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+  </div>
+</nav>
+
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-sidebar-header"><h3>🛒 سلة الحجوزات</h3><button class="modal-close" onclick="toggleCart()">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;"><div class="cart-total"><span>المجموع</span><span id="cartTotal">0 ر.س</span></div><button class="btn btn-primary btn-block" onclick="openCheckout()">إتمام الحجز</button></div>
+</div>
+
+<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLogin()"><div class="modal" style="max-width:420px;"><div class="modal-header"><h3>👤 تسجيل الدخول</h3><button class="modal-close" onclick="closeLogin()">✕</button></div><div class="modal-body" id="loginBody"></div></div></div>
+<div class="modal-overlay" id="accountModal" onclick="if(event.target===this)closeAccount()"><div class="modal" style="max-width:560px;"><div class="modal-header"><h3>👤 حسابي</h3><button class="modal-close" onclick="closeAccount()">✕</button></div><div class="modal-body" id="accountBody"></div></div></div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <section class="hero" <% if (settings.heroBgImage) { %>style="background:url('<%= settings.heroBgImage %>') center/cover no-repeat;"<% } %>><% if (settings.heroBgImage) { %><div style="position:absolute;inset:0;background:rgba(0,0,0,<%= settings.heroBgOverlay %>);z-index:1;"></div><% } %>
+    <div class="hero-content">
+      <div class="hero-tag">✦ <%= settings.heroTag %></div>
+      <h1><%- settings.heroTitle.replace('Whisper', '<span class="highlight">Whisper</span>') %></h1>
+      <p><%= settings.heroSubtitle %></p>
+      <div class="hero-btns"><button class="btn btn-primary" onclick="navigateTo('products')">تصفّح المعدات ←</button><button class="btn btn-outline" onclick="navigateTo('contact')">تواصل معنا</button></div>
+    </div>
+  </section>
+  <div class="features-strip"><% settings.features.forEach(function(f) { %><div class="feature-item reveal"><div class="feature-icon"><%= f.icon %></div><div class="feature-text"><h4><%= f.title %></h4><p><%= f.desc %></p></div></div><% }) %></div>
+  <section>
+    <div class="section-header reveal"><div class="tag">✦ المعدات</div><h2>معدات تصوير للإيجار</h2><p>اختر من مجموعتنا المتنوعة من معدات التصوير الاحترافية</p></div>
+    <div class="products-grid"><% products.forEach(function(p) { %>
+      <div class="product-card reveal">
+        <div class="product-img"><% if(p.image) { %><img src="<%= p.image %>" alt="تأجير <%= p.name %>" loading="lazy"><% } else { %><%= p.icon %><% } %><span class="product-badge <%= p.available ? 'badge-available' : 'badge-rented' %>"><%= p.available ? 'متاح' : 'محجوز' %></span></div>
+        <div class="product-info"><h3><%= p.name %></h3><div class="specs"><%= p.specs %></div><p style="font-size:0.83rem;color:var(--text-dim);margin-bottom:16px;"><%= p.description %></p><div class="product-pricing"><div class="product-price"><%= p.pricePerDay %> ر.س <small>/ يوم</small></div><div class="product-rating">★ <%= p.rating %></div></div>
+        <button class="btn btn-primary btn-sm btn-block" style="margin-top:16px;" onclick="openBooking('<%= p._id %>','<%= p.name %>','<%= p.icon %>','<%= p.specs %>',<%= p.pricePerDay %>,<%= p.deposit %>,'<%= p.image %>')" <%= !p.available ? 'disabled style="margin-top:16px;opacity:0.4;cursor:not-allowed;"' : '' %>><%= p.available ? '📅 احجز الآن' : 'غير متاح حالياً' %></button></div>
+      </div>
+    <% }) %></div>
+  </section>
+</div>
+
+<!-- PRODUCTS -->
+<div class="page" id="page-products"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ معدات التصوير للإيجار</div><h2>جميع المعدات المتاحة</h2><p>اختر من مجموعتنا الواسعة من معدات التصوير الاحترافية</p></div><div class="products-grid" id="allProductsGrid"><div style="text-align:center;padding:40px;color:var(--text-dim);">جاري التحميل...</div></div></section></div>
+
+<!-- REVIEWS -->
+<div class="page" id="page-reviews"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ آراء عملائنا</div><h2>ماذا يقولون عن Whisper</h2></div><div class="reviews-grid" id="reviewsGrid"></div><div style="max-width:600px;margin:60px auto 0;"><div class="contact-form reveal"><h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:24px;text-align:center;">أضف تقييمك</h3><div class="form-group"><label>الاسم</label><input type="text" id="reviewName" placeholder="اسمك الكريم"></div><div class="form-group"><label>التقييم</label><div id="reviewStars" style="display:flex;gap:8px;font-size:1.5rem;cursor:pointer;direction:ltr;"><span onclick="setRating(1)">☆</span><span onclick="setRating(2)">☆</span><span onclick="setRating(3)">☆</span><span onclick="setRating(4)">☆</span><span onclick="setRating(5)">☆</span></div></div><div class="form-group"><label>تجربتك</label><textarea id="reviewText" placeholder="شاركنا تجربتك..."></textarea></div><button class="btn btn-primary btn-block" onclick="submitReview()">إرسال التقييم</button></div></div></section></div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ تواصل معنا</div><h2>نحب نسمع منك</h2></div><div class="contact-grid"><div class="contact-info reveal"><div class="contact-item"><div class="contact-icon">📍</div><div><h4>الموقع</h4><p><%= settings.address %></p></div></div><div class="contact-item"><div class="contact-icon">📱</div><div><h4>الجوال</h4><p style="direction:ltr;text-align:right;"><%= settings.phone %></p></div></div><div class="contact-item"><div class="contact-icon">✉️</div><div><h4>البريد</h4><p><%= settings.email %></p></div></div><div class="contact-item"><div class="contact-icon">🕐</div><div><h4>أوقات العمل</h4><p><%= settings.workingHours %></p></div></div><div class="contact-item"><div class="contact-icon">📸</div><div><h4>انستقرام</h4><p><%= settings.instagram %></p></div></div><% if (settings.whatsapp) { %><div class="contact-item"><div class="contact-icon">💬</div><div><h4>واتساب</h4><p style="direction:ltr;text-align:right;"><%= settings.whatsapp %></p></div></div><% } %></div><div class="contact-form reveal"><h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:24px;">أرسل لنا رسالة</h3><div class="form-group"><label>الاسم</label><input type="text" id="contactName" placeholder="اسمك"></div><div class="form-group"><label>الإيميل</label><input type="email" id="contactEmail" placeholder="email@example.com" style="direction:ltr;text-align:right;"></div><div class="form-group"><label>الجوال</label><input type="tel" id="contactPhone" placeholder="+966" style="direction:ltr;text-align:right;"></div><div class="form-group"><label>الموضوع</label><select id="contactSubject"><option value="">اختر</option><option>استفسار عن التأجير</option><option>طلب تسعيرة</option><option>مشكلة تقنية</option><option>اقتراح أو شكوى</option><option>أخرى</option></select></div><div class="form-group"><label>الرسالة</label><textarea id="contactMessage" placeholder="اكتب رسالتك..." rows="4"></textarea></div><button class="btn btn-primary btn-block" onclick="submitContact()">إرسال ←</button></div></div></section></div>
+
+<!-- ABOUT -->
+<% if (settings.aboutText) { %><div class="page" id="page-about"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ من نحن</div><h2>تعرّف على Whisper</h2></div><div style="max-width:800px;margin:0 auto;color:var(--text-dim);font-size:1rem;line-height:2;" class="reveal"><%- settings.aboutText.replace(/\n/g, '<br>') %></div></section></div><% } %>
+
+<!-- TERMS -->
+<% if (settings.termsText) { %><div class="page" id="page-terms"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ الشروط والأحكام</div><h2>شروط وأحكام الاستخدام</h2></div><div style="max-width:800px;margin:0 auto;color:var(--text-dim);font-size:1rem;line-height:2;" class="reveal"><%- settings.termsText.replace(/\n/g, '<br>') %></div></section></div><% } %>
+
+<div class="modal-overlay" id="bookingModal" onclick="if(event.target===this)closeBooking()"><div class="modal"><div class="modal-header"><h3>📅 حجز معدة</h3><button class="modal-close" onclick="closeBooking()">✕</button></div><div class="modal-body" id="bookingBody"></div></div></div>
+<div class="modal-overlay" id="checkoutModal" onclick="if(event.target===this)closeCheckout()"><div class="modal" style="max-width:560px;"><div class="modal-header"><h3>💳 إتمام الحجز</h3><button class="modal-close" onclick="closeCheckout()">✕</button></div><div class="modal-body" id="checkoutBody"></div></div></div>
+
+<footer>
+  <div class="footer-logo"><% if (settings.logoType === 'image' && settings.logoImage) { %><img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" style="max-height:36px;"><% } else { %><%= settings.logoText || settings.siteName %><% } %></div>
+  <% if (settings.footerDescription) { %><p style="color:var(--text-dim);font-size:.9rem;max-width:500px;margin:0 auto 16px;"><%= settings.footerDescription %></p><% } %>
+  <div class="footer-links">
+    <% settings.footerLinks.filter(l => l.visible).sort((a,b) => a.order - b.order).forEach(link => { %>
+      <% if (link.page === 'external' && link.url) { %>
+        <a href="<%= link.url %>" target="_blank"><%= link.label %></a>
+      <% } else if (link.page && link.page.startsWith('page-')) { %>
+        <a href="/page/<%= link.page.replace('page-','') %>"><%= link.label %></a>
+      <% } else { %>
+        <a href="#" onclick="navigateTo('<%= link.page %>')"><%= link.label %></a>
+      <% } %>
+    <% }) %>
+  </div>
+  <% if (settings.showSocialInFooter !== false) { %>
+  <div style="display:flex;justify-content:center;gap:16px;margin:16px 0;">
+    <% if (settings.instagram) { %><a href="<%= settings.instagramUrl || '#' %>" target="_blank" style="color:var(--text-dim);text-decoration:none;font-size:.85rem;">📸 <%= settings.instagram %></a><% } %>
+    <% if (settings.whatsapp) { %><a href="https://wa.me/<%= settings.whatsapp %>" target="_blank" style="color:var(--text-dim);text-decoration:none;font-size:.85rem;">💬 واتساب</a><% } %>
+    <% if (settings.twitter) { %><a href="https://twitter.com/<%= settings.twitter.replace('@','') %>" target="_blank" style="color:var(--text-dim);text-decoration:none;font-size:.85rem;">🐦 <%= settings.twitter %></a><% } %>
+    <% if (settings.tiktok) { %><a href="https://tiktok.com/<%= settings.tiktok %>" target="_blank" style="color:var(--text-dim);text-decoration:none;font-size:.85rem;">🎵 <%= settings.tiktok %></a><% } %>
+  </div>
+  <% } %>
+  <p><%= settings.footerText %></p>
+</footer>
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/store.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — تخصيص الواجهة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;z-index:10}.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border)}.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}.sidebar-nav{flex:1;padding:16px 12px}.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:.3s;margin-bottom:4px}.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center}.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border)}.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.85rem}
+.main{margin-right:260px;flex:1;padding:32px}.page-header{margin-bottom:24px}.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}.page-header p{color:var(--dim);font-size:.9rem;margin-top:4px}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:24px}
+.section-card h3{font-family:'Noto Kufi Arabic',serif;font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.link-row{display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--elevated);border-radius:10px;margin-bottom:8px;flex-wrap:wrap}
+.link-row .drag-handle{cursor:grab;color:var(--muted);font-size:1.2rem;flex-shrink:0}
+.link-row input{flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;min-width:120px}
+.link-row select{padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;min-width:140px}
+.link-row .toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.link-row .toggle input{opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;z-index:1}
+.link-row .toggle-track{width:36px;height:20px;background:var(--muted);border-radius:10px;transition:.3s;position:absolute;top:0}
+.link-row .toggle input:checked+.toggle-track{background:var(--accent)}
+.link-row .toggle-track::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;right:2px;transition:.3s}
+.link-row .toggle input:checked+.toggle-track::after{right:18px}
+.btn{padding:10px 24px;border-radius:60px;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:600;border:none;cursor:pointer;transition:.3s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}.btn-accent{background:var(--accent);color:var(--bg)}.btn-accent:hover{background:#e0c9a6}.btn-sm{padding:6px 16px;font-size:.8rem;border-radius:6px}.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--accent)}.btn-danger-sm{background:none;border:none;color:var(--danger);cursor:pointer;font-size:.9rem;padding:4px}
+.btn-block{width:100%;justify-content:center;text-align:center}
+.section-item{display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--elevated);border-radius:10px;margin-bottom:8px}
+.section-item .drag-handle{cursor:grab;color:var(--muted);font-size:1.2rem}
+.section-item .name{flex:1;font-weight:600;font-size:.95rem}
+.hint{font-size:.75rem;color:var(--muted);margin-top:4px}
+.form-group{margin-bottom:16px}.form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--dim);margin-bottom:6px}
+.form-group input,.form-group textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;outline:none}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer;margin-bottom:8px}
+.saved-msg{background:rgba(109,181,109,.15);border:1px solid rgba(109,181,109,.3);color:var(--success);padding:12px 20px;border-radius:10px;margin-bottom:24px}
+.preview-bar{background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.preview-bar .link{color:var(--dim);font-size:.9rem;font-weight:500}
+.preview-bar .link.active-link{color:var(--accent);font-weight:700}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}.link-row{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header"><h1>🎨 تخصيص الواجهة</h1><p>تحكم بالهيدر والفوتر وترتيب أقسام الصفحة الرئيسية</p></div>
+
+  <% if (saved) { %><div class="saved-msg">✅ تم حفظ التعديلات!</div><% } %>
+
+  <form method="POST" action="/admin/appearance">
+
+    <!-- النافبار -->
+    <div class="section-card">
+      <h3>🔝 روابط النافبار (الهيدر)</h3>
+      <p style="color:var(--dim);font-size:.85rem;margin-bottom:16px;">عدّل الروابط اللي تظهر بالنافبار. تقدر تضيف روابط لصفحات داخلية أو روابط خارجية.</p>
+      <div id="navLinksContainer">
+        <% settings.navLinks.sort((a,b) => a.order - b.order).forEach((link, i) => { %>
+        <div class="link-row">
+          <span class="drag-handle">⋮⋮</span>
+          <input name="nav_label_<%= i %>" value="<%= link.label %>" placeholder="اسم الرابط">
+          <select name="nav_page_<%= i %>">
+            <option value="home" <%= link.page === 'home' ? 'selected' : '' %>>الرئيسية</option>
+            <option value="products" <%= link.page === 'products' ? 'selected' : '' %>>المعدات</option>
+            <option value="reviews" <%= link.page === 'reviews' ? 'selected' : '' %>>التقييمات</option>
+            <option value="contact" <%= link.page === 'contact' ? 'selected' : '' %>>تواصل معنا</option>
+            <option value="about" <%= link.page === 'about' ? 'selected' : '' %>>من نحن</option>
+            <option value="terms" <%= link.page === 'terms' ? 'selected' : '' %>>الشروط والأحكام</option>
+            <option value="external" <%= link.page === 'external' ? 'selected' : '' %>>رابط خارجي</option>
+            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>><%= p.title %></option><% }) %>
+          </select>
+          <input name="nav_url_<%= i %>" value="<%= link.url || '' %>" placeholder="رابط خارجي (اختياري)" style="direction:ltr;text-align:right;min-width:180px;">
+          <div class="toggle"><input type="checkbox" name="nav_visible_<%= i %>" <%= link.visible ? 'checked' : '' %>><div class="toggle-track"></div></div>
+        </div>
+        <% }) %>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline" style="margin-top:12px;" onclick="addNavLink()">+ إضافة رابط</button>
+      <input type="hidden" id="navLinksCount" name="navLinksCount" value="<%= settings.navLinks.length %>">
+      <div class="preview-bar" style="margin-top:16px;">
+        <span style="font-size:.8rem;color:var(--muted);">معاينة:</span>
+        <% settings.navLinks.filter(l => l.visible).sort((a,b) => a.order - b.order).forEach(link => { %>
+        <span class="link"><%= link.label %></span>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- الفوتر -->
+    <div class="section-card">
+      <h3>📎 تخصيص الفوتر</h3>
+      <div class="form-group"><label>وصف الفوتر (اختياري)</label><input name="footerDescription" value="<%= settings.footerDescription || '' %>" placeholder="نص يظهر تحت الشعار في الفوتر"></div>
+      <label class="checkbox-label"><input type="checkbox" name="showSocialInFooter" <%= settings.showSocialInFooter !== false ? 'checked' : '' %>> إظهار روابط السوشال ميديا في الفوتر</label>
+
+      <h4 style="font-size:.95rem;font-weight:700;margin:20px 0 12px;">روابط الفوتر</h4>
+      <div id="footerLinksContainer">
+        <% settings.footerLinks.sort((a,b) => a.order - b.order).forEach((link, i) => { %>
+        <div class="link-row">
+          <span class="drag-handle">⋮⋮</span>
+          <input name="footer_label_<%= i %>" value="<%= link.label %>" placeholder="اسم الرابط">
+          <select name="footer_page_<%= i %>">
+            <option value="home" <%= link.page === 'home' ? 'selected' : '' %>>الرئيسية</option>
+            <option value="products" <%= link.page === 'products' ? 'selected' : '' %>>المعدات</option>
+            <option value="reviews" <%= link.page === 'reviews' ? 'selected' : '' %>>التقييمات</option>
+            <option value="contact" <%= link.page === 'contact' ? 'selected' : '' %>>تواصل معنا</option>
+            <option value="about" <%= link.page === 'about' ? 'selected' : '' %>>من نحن</option>
+            <option value="terms" <%= link.page === 'terms' ? 'selected' : '' %>>الشروط والأحكام</option>
+            <option value="external" <%= link.page === 'external' ? 'selected' : '' %>>رابط خارجي</option>
+            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>><%= p.title %></option><% }) %>
+          </select>
+          <input name="footer_url_<%= i %>" value="<%= link.url || '' %>" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;">
+          <div class="toggle"><input type="checkbox" name="footer_visible_<%= i %>" <%= link.visible ? 'checked' : '' %>><div class="toggle-track"></div></div>
+        </div>
+        <% }) %>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline" style="margin-top:12px;" onclick="addFooterLink()">+ إضافة رابط</button>
+      <input type="hidden" id="footerLinksCount" name="footerLinksCount" value="<%= settings.footerLinks.length %>">
+    </div>
+
+    <!-- ترتيب أقسام الرئيسية -->
+    <div class="section-card">
+      <h3>📐 ترتيب أقسام الصفحة الرئيسية</h3>
+      <p style="color:var(--dim);font-size:.85rem;margin-bottom:16px;">تحكم بإظهار/إخفاء أقسام الصفحة الرئيسية.</p>
+      <% settings.homeSections.sort((a,b) => a.order - b.order).forEach((sec, i) => { %>
+      <div class="section-item">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="name"><%= sec.label %></span>
+        <input type="hidden" name="section_id_<%= i %>" value="<%= sec.id %>">
+        <input type="hidden" name="section_label_<%= i %>" value="<%= sec.label %>">
+        <input type="hidden" name="section_order_<%= i %>" value="<%= i %>">
+        <div class="toggle"><input type="checkbox" name="section_visible_<%= i %>" <%= sec.visible ? 'checked' : '' %>><div class="toggle-track"></div></div>
+      </div>
+      <% }) %>
+      <input type="hidden" name="sectionsCount" value="<%= settings.homeSections.length %>">
+    </div>
+
+    <button type="submit" class="btn btn-accent btn-block" style="max-width:400px;margin:0 auto;display:block;">💾 حفظ تخصيص الواجهة</button>
+  </form>
+</div>
+
+<script>
+let navCount = <%= settings.navLinks.length %>;
+let footerCount = <%= settings.footerLinks.length %>;
+
+function addNavLink() {
+  const c = document.getElementById('navLinksContainer');
+  const i = navCount++;
+  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="nav_label_${i}" placeholder="اسم الرابط"><select name="nav_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="about">من نحن</option><option value="terms">الشروط</option><option value="external">رابط خارجي</option></select><input name="nav_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="nav_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
+  document.getElementById('navLinksCount').value = navCount;
+}
+function addFooterLink() {
+  const c = document.getElementById('footerLinksContainer');
+  const i = footerCount++;
+  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="footer_label_${i}" placeholder="اسم الرابط"><select name="footer_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="about">من نحن</option><option value="terms">الشروط</option><option value="external">رابط خارجي</option></select><input name="footer_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="footer_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
+  document.getElementById('footerLinksCount').value = footerCount;
+}
+</script>
+</body></html>

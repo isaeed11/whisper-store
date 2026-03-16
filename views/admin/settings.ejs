@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — إعدادات الموقع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Noto+Kufi+Arabic:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--elevated:#1a1a1a;--accent:#c8a97e;--accent-glow:rgba(200,169,126,0.15);--text:#f0ece4;--dim:#8a8578;--muted:#5a5650;--border:rgba(200,169,126,0.12);--success:#6db56d;--danger:#c75050;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:24px 0;position:fixed;top:0;right:0;height:100vh;display:flex;flex-direction:column;z-index:10}.sidebar-logo{font-family:'Noto Kufi Arabic',serif;font-size:1.3rem;font-weight:900;color:var(--accent);letter-spacing:3px;text-transform:uppercase;padding:0 24px 24px;border-bottom:1px solid var(--border)}.sidebar-logo span{display:block;font-size:.65rem;font-weight:400;color:var(--dim)}.sidebar-nav{flex:1;padding:16px 12px}.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:.3s;margin-bottom:4px}.sidebar-nav a:hover{background:var(--elevated);color:var(--text)}.sidebar-nav a.active{background:var(--accent-glow);color:var(--accent);font-weight:700}.sidebar-nav a .icon{font-size:1.1rem;width:24px;text-align:center}.sidebar-bottom{padding:16px 24px;border-top:1px solid var(--border)}.sidebar-bottom a{color:var(--dim);text-decoration:none;font-size:.85rem}
+.main{margin-right:260px;flex:1;padding:32px}.page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:center}.page-header h1{font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:800}
+.saved-msg{background:rgba(109,181,109,0.15);border:1px solid rgba(109,181,109,0.3);color:var(--success);padding:12px 20px;border-radius:10px;margin-bottom:24px;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap}.tab{padding:10px 24px;border-radius:30px;background:var(--elevated);border:1px solid var(--border);color:var(--dim);cursor:pointer;font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:500;transition:.3s}.tab:hover,.tab.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:24px}
+.settings-card h3{font-family:'Noto Kufi Arabic',serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.form-group{margin-bottom:16px}.form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--dim);margin-bottom:6px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;outline:none;transition:.3s}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-row-3{display:grid;grid-template-columns:60px 1fr 1fr;gap:12px;align-items:end;margin-bottom:12px;padding:12px;background:var(--elevated);border-radius:8px}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer;padding:8px 0}
+.btn{padding:14px 36px;border-radius:60px;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:.3s;border:none}.btn-accent{background:var(--accent);color:var(--bg)}.btn-accent:hover{background:#e0c9a6}.btn-block{width:100%;text-align:center}
+.hint{font-size:.75rem;color:var(--muted);margin-top:4px}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}.form-row{grid-template-columns:1fr}.form-row-3{grid-template-columns:60px 1fr}}
+</style>
+</head>
+<body>
+<%- include("sidebar") %>
+
+<div class="main">
+  <div class="page-header"><h1>⚙️ إعدادات الموقع</h1></div>
+
+  <% if (saved) { %><div class="saved-msg">✅ تم حفظ الإعدادات بنجاح!</div><% } %>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('general')">🏠 عام</div>
+    <div class="tab" onclick="showTab('contact')">📞 التواصل</div>
+    <div class="tab" onclick="showTab('logo')">🏷️ الشعار</div>
+    <div class="tab" onclick="showTab('colors')">🎨 الألوان</div>
+    <div class="tab" onclick="showTab('hero')">🎯 البنر الرئيسي</div>
+    <div class="tab" onclick="showTab('features')">✨ المميزات</div>
+    <div class="tab" onclick="showTab('seo')">🔍 SEO</div>
+    <div class="tab" onclick="showTab('advanced')">🔧 متقدم</div>
+  </div>
+
+  <form method="POST" action="/admin/settings" enctype="multipart/form-data">
+
+    <!-- عام -->
+    <div class="tab-content active" id="tab-general">
+      <div class="settings-card">
+        <h3>🏠 معلومات الموقع الأساسية</h3>
+        <div class="form-row">
+          <div class="form-group"><label>اسم الموقع</label><input name="siteName" value="<%= settings.siteName %>"></div>
+          <div class="form-group"><label>الشعار الفرعي</label><input name="siteTagline" value="<%= settings.siteTagline %>"></div>
+        </div>
+        <div class="form-group"><label>وصف الموقع</label><textarea name="siteDescription" rows="2"><%= settings.siteDescription %></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>العملة</label><input name="currency" value="<%= settings.currency %>"></div>
+          <div class="form-group"><label>التأمين الافتراضي (ر.س)</label><input type="number" name="defaultDeposit" value="<%= settings.defaultDeposit %>"></div>
+        </div>
+        <div class="form-group"><label>الحد الأدنى لأيام التأجير</label><input type="number" name="minRentalDays" value="<%= settings.minRentalDays %>" min="1"></div>
+        <div class="form-group"><label>نص تذييل الصفحة</label><input name="footerText" value="<%= settings.footerText %>"></div>
+        <div class="form-group"><label>شريط إعلانات علوي (اتركه فارغ لإخفائه)</label><input name="announcementBar" value="<%= settings.announcementBar %>" placeholder="مثال: خصم 20% على جميع المعدات!"></div>
+      </div>
+    </div>
+
+    <!-- التواصل -->
+    <div class="tab-content" id="tab-contact">
+      <div class="settings-card">
+        <h3>📞 بيانات التواصل</h3>
+        <div class="form-row">
+          <div class="form-group"><label>رقم الجوال</label><input name="phone" value="<%= settings.phone %>" style="direction:ltr;text-align:right"></div>
+          <div class="form-group"><label>البريد الإلكتروني</label><input name="email" value="<%= settings.email %>" style="direction:ltr;text-align:right"></div>
+        </div>
+        <div class="form-group"><label>العنوان</label><input name="address" value="<%= settings.address %>"></div>
+        <div class="form-group"><label>أوقات العمل</label><input name="workingHours" value="<%= settings.workingHours %>"></div>
+      </div>
+      <div class="settings-card">
+        <h3>📱 السوشال ميديا</h3>
+        <div class="form-row">
+          <div class="form-group"><label>📸 انستقرام (المعرّف)</label><input name="instagram" value="<%= settings.instagram %>"></div>
+          <div class="form-group"><label>رابط الانستقرام</label><input name="instagramUrl" value="<%= settings.instagramUrl %>" style="direction:ltr;text-align:right"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>💬 واتساب</label><input name="whatsapp" value="<%= settings.whatsapp %>" placeholder="رقم الواتساب" style="direction:ltr;text-align:right"></div>
+          <div class="form-group"><label>🐦 تويتر/X</label><input name="twitter" value="<%= settings.twitter %>" placeholder="@username"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>🎵 تيك توك</label><input name="tiktok" value="<%= settings.tiktok %>" placeholder="@username"></div>
+          <div class="form-group"><label>📍 رابط خرائط قوقل</label><input name="googleMapsUrl" value="<%= settings.googleMapsUrl %>" style="direction:ltr;text-align:right"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- الشعار -->
+    <div class="tab-content" id="tab-logo">
+      <div class="settings-card">
+        <h3>🏷️ شعار الموقع</h3>
+        <div class="form-group">
+          <label>نوع الشعار</label>
+          <select name="logoType" id="logoTypeSelect" onchange="toggleLogoFields()">
+            <option value="text" <%= settings.logoType === 'text' ? 'selected' : '' %>>نص</option>
+            <option value="image" <%= settings.logoType === 'image' ? 'selected' : '' %>>صورة</option>
+          </select>
+        </div>
+        <div id="logoTextField" style="<%= settings.logoType === 'image' ? 'display:none' : '' %>">
+          <div class="form-group"><label>نص الشعار</label><input name="logoText" value="<%= settings.logoText %>" placeholder="WHISPER" style="font-size:1.2rem;font-weight:700;letter-spacing:2px;"></div>
+        </div>
+        <div id="logoImageField" style="<%= settings.logoType === 'text' ? 'display:none' : '' %>">
+          <div class="form-group">
+            <label>صورة الشعار</label>
+            <input type="file" name="logoImage" accept="image/*" style="padding:8px;">
+            <% if (settings.logoImage) { %><div style="margin-top:12px;"><img src="<%= settings.logoImage %>" style="max-height:50px;border-radius:8px;background:var(--elevated);padding:8px;"></div><% } %>
+          </div>
+        </div>
+        <div style="background:var(--elevated);border-radius:10px;padding:20px;margin-top:16px;text-align:center;">
+          <p style="font-size:0.8rem;color:var(--dim);margin-bottom:8px;">معاينة:</p>
+          <% if (settings.logoType === 'image' && settings.logoImage) { %>
+            <img src="<%= settings.logoImage %>" style="max-height:40px;">
+          <% } else { %>
+            <span style="font-family:'Noto Kufi Arabic',serif;font-size:1.6rem;font-weight:900;color:<%= settings.accentColor %>;letter-spacing:4px;"><%= settings.logoText || settings.siteName %></span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- الألوان -->
+    <div class="tab-content" id="tab-colors">
+      <div class="settings-card">
+        <h3>🎨 ألوان الموقع</h3>
+        <p style="color:var(--dim);font-size:0.85rem;margin-bottom:20px;">غيّر الألوان الرئيسية للمتجر. التغيير ينعكس على كل الموقع فوراً.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>اللون الرئيسي (Accent)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" name="accentColor" value="<%= settings.accentColor %>" style="width:50px;height:40px;border:none;border-radius:8px;cursor:pointer;padding:0;">
+              <input type="text" value="<%= settings.accentColor %>" style="flex:1;direction:ltr;text-align:center;" onchange="this.previousElementSibling.value=this.value" readonly>
+            </div>
+            <div class="hint">الأزرار، الروابط، العناوين المميزة</div>
+          </div>
+          <div class="form-group">
+            <label>لون الخلفية</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" name="bgColor" value="<%= settings.bgColor %>" style="width:50px;height:40px;border:none;border-radius:8px;cursor:pointer;padding:0;">
+              <input type="text" value="<%= settings.bgColor %>" style="flex:1;direction:ltr;text-align:center;" readonly>
+            </div>
+            <div class="hint">خلفية الصفحة الرئيسية</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>لون البطاقات</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" name="cardColor" value="<%= settings.cardColor %>" style="width:50px;height:40px;border:none;border-radius:8px;cursor:pointer;padding:0;">
+              <input type="text" value="<%= settings.cardColor %>" style="flex:1;direction:ltr;text-align:center;" readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>لون النصوص</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" name="textColor" value="<%= settings.textColor %>" style="width:50px;height:40px;border:none;border-radius:8px;cursor:pointer;padding:0;">
+              <input type="text" value="<%= settings.textColor %>" style="flex:1;direction:ltr;text-align:center;" readonly>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--elevated);border-radius:10px;padding:20px;margin-top:16px;">
+          <p style="font-size:0.8rem;color:var(--dim);margin-bottom:8px;">ألوان مقترحة:</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="width:32px;height:32px;border-radius:8px;background:#c8a97e;cursor:pointer;border:2px solid transparent;" onclick="document.querySelector('[name=accentColor]').value='#c8a97e'" title="ذهبي (افتراضي)"></span>
+            <span style="width:32px;height:32px;border-radius:8px;background:#6db56d;cursor:pointer;" onclick="document.querySelector('[name=accentColor]').value='#6db56d'" title="أخضر"></span>
+            <span style="width:32px;height:32px;border-radius:8px;background:#64a0ff;cursor:pointer;" onclick="document.querySelector('[name=accentColor]').value='#64a0ff'" title="أزرق"></span>
+            <span style="width:32px;height:32px;border-radius:8px;background:#e24b4a;cursor:pointer;" onclick="document.querySelector('[name=accentColor]').value='#e24b4a'" title="أحمر"></span>
+            <span style="width:32px;height:32px;border-radius:8px;background:#d4537e;cursor:pointer;" onclick="document.querySelector('[name=accentColor]').value='#d4537e'" title="وردي"></span>
+            <span style="width:32px;height:32px;border-radius:8px;background:#EF9F27;cursor:pointer;" onclick="document.querySelector('[name=accentColor]').value='#EF9F27'" title="برتقالي"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- البنر الرئيسي -->
+    <div class="tab-content" id="tab-hero">
+      <div class="settings-card">
+        <h3>🎯 البنر الرئيسي (Hero)</h3>
+        <div class="form-group"><label>التاج العلوي</label><input name="heroTag" value="<%= settings.heroTag %>"><div class="hint">النص الصغير فوق العنوان الرئيسي</div></div>
+        <div class="form-group"><label>العنوان الرئيسي</label><input name="heroTitle" value="<%= settings.heroTitle %>"><div class="hint">استخدم كلمة Whisper وبيتلوّن تلقائياً</div></div>
+        <div class="form-group"><label>الوصف</label><textarea name="heroSubtitle" rows="3"><%= settings.heroSubtitle %></textarea></div>
+      </div>
+      <div class="settings-card">
+        <h3>🖼️ صورة خلفية البنر</h3>
+        <div class="form-group">
+          <label>رفع صورة خلفية (اختياري)</label>
+          <input type="file" name="heroBgImage" accept="image/*" style="padding:8px;">
+          <% if (settings.heroBgImage) { %><div style="margin-top:12px;"><img src="<%= settings.heroBgImage %>" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover;"></div><% } %>
+          <div class="hint">الصورة تظهر كخلفية للبنر مع طبقة شفافة فوقها عشان النص يكون واضح</div>
+        </div>
+        <div class="form-group"><label>شفافية الطبقة (0.1 فاتح — 0.9 غامق)</label><input type="number" name="heroBgOverlay" value="<%= settings.heroBgOverlay %>" min="0.1" max="0.95" step="0.05"><div class="hint">كل ما زادت القيمة كل ما صارت الخلفية أغمق والنص أوضح</div></div>
+      </div>
+      <div class="settings-card">
+        <h3>📄 صفحات إضافية</h3>
+        <div class="form-group"><label>نص الشروط والأحكام</label><textarea name="termsText" rows="4" placeholder="اكتب شروط وأحكام التأجير..."><%= settings.termsText %></textarea></div>
+        <div class="form-group"><label>نص &quot;من نحن&quot;</label><textarea name="aboutText" rows="4" placeholder="اكتب نبذة عن المتجر..."><%= settings.aboutText %></textarea></div>
+      </div>
+    </div>
+
+    <!-- المميزات -->
+    <div class="tab-content" id="tab-features">
+      <div class="settings-card">
+        <h3>✨ شريط المميزات</h3>
+        <p style="color:var(--dim);font-size:.85rem;margin-bottom:16px">هذي المميزات اللي تظهر تحت الهيرو. تقدر تضيف حتى 6.</p>
+        <% for(let i = 0; i < 6; i++) { const f = settings.features[i] || {}; %>
+        <div class="form-row-3">
+          <div class="form-group"><label>أيقونة</label><input name="feat_icon_<%= i %>" value="<%= f.icon || '' %>" placeholder="🚀" style="text-align:center;font-size:1.2rem"></div>
+          <div class="form-group"><label>العنوان</label><input name="feat_title_<%= i %>" value="<%= f.title || '' %>" placeholder="مثال: توصيل سريع"></div>
+          <div class="form-group"><label>الوصف</label><input name="feat_desc_<%= i %>" value="<%= f.desc || '' %>" placeholder="مثال: نوصل لك في نفس اليوم"></div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- SEO -->
+    <div class="tab-content" id="tab-seo">
+      <div class="settings-card">
+        <h3>🔍 تحسين محركات البحث (SEO)</h3>
+        <div class="form-group"><label>عنوان الصفحة (Title Tag)</label><input name="seoTitle" value="<%= settings.seoTitle %>"><div class="hint">يظهر في نتائج قوقل — الأفضل 50-60 حرف</div></div>
+        <div class="form-group"><label>الوصف (Meta Description)</label><textarea name="seoDescription" rows="2"><%= settings.seoDescription %></textarea><div class="hint">يظهر تحت العنوان في قوقل — الأفضل 150-160 حرف</div></div>
+        <div class="form-group"><label>الكلمات المفتاحية (مفصولة بفواصل)</label><textarea name="seoKeywords" rows="2"><%= settings.seoKeywords %></textarea><div class="hint">مثال: تأجير معدات تصوير الدمام, تأجير كاميرات السعودية</div></div>
+      </div>
+    </div>
+
+    <!-- متقدم -->
+    <div class="tab-content" id="tab-advanced">
+      <div class="settings-card">
+        <h3>💬 إشعارات واتساب</h3>
+        <p style="color:var(--dim);font-size:.85rem;margin-bottom:16px;">لما يجيك طلب جديد، تنفتح لك رسالة واتساب جاهزة بتفاصيل الطلب ترسلها لنفسك أو لفريقك.</p>
+        <label class="checkbox-label">
+          <input type="checkbox" name="whatsappNotify" <%= settings.whatsappNotify ? 'checked' : '' %>>
+          تفعيل إشعارات واتساب للطلبات الجديدة
+        </label>
+        <div class="form-group" style="margin-top:12px;">
+          <label>رقم واتساب للإشعارات (مع رمز الدولة)</label>
+          <input name="whatsappNotifyNumber" value="<%= settings.whatsappNotifyNumber %>" placeholder="966500000000" style="direction:ltr;text-align:right;">
+          <div class="hint">مثال: 966500000000 (بدون + أو 0)</div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3>🔧 وضع الصيانة</h3>
+        <label class="checkbox-label">
+          <input type="checkbox" name="maintenanceMode" <%= settings.maintenanceMode ? 'checked' : '' %>>
+          🔒 وضع الصيانة (يقفل الموقع ويعرض رسالة صيانة)
+        </label>
+        <div class="hint" style="color:var(--danger)">⚠️ تفعيل هذا الخيار يمنع الزوار من الوصول للموقع</div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-accent btn-block" style="max-width:400px;margin:0 auto;display:block;">💾 حفظ جميع الإعدادات</button>
+  </form>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+function toggleLogoFields() {
+  const type = document.getElementById('logoTypeSelect').value;
+  document.getElementById('logoTextField').style.display = type === 'text' ? '' : 'none';
+  document.getElementById('logoImageField').style.display = type === 'image' ? '' : 'none';
+}
+</script>
+</body></html>
