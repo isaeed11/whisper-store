@@ -408,18 +408,65 @@ router.post('/pages', isAdmin, async (req, res) => {
   try {
     const { title, slug, content, showInNav, showInFooter } = req.body;
     const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
-    await Page.create({ title, slug: cleanSlug, content, showInNav: showInNav === 'on', showInFooter: showInFooter === 'on' });
+    const page = await Page.create({ title, slug: cleanSlug, content, showInNav: showInNav === 'on', showInFooter: showInFooter === 'on' });
+
+    // إضافة تلقائية للنافبار والفوتر
+    const settings = await Settings.get();
+    if (showInNav === 'on') {
+      const exists = settings.navLinks.find(l => l.page === 'page-' + cleanSlug);
+      if (!exists) {
+        settings.navLinks.push({ label: title, page: 'page-' + cleanSlug, url: '', order: settings.navLinks.length, visible: true });
+      }
+    }
+    if (showInFooter === 'on') {
+      const exists = settings.footerLinks.find(l => l.page === 'page-' + cleanSlug);
+      if (!exists) {
+        settings.footerLinks.push({ label: title, page: 'page-' + cleanSlug, url: '', order: settings.footerLinks.length, visible: true });
+      }
+    }
+    await settings.save();
+
     await Activity.log('page', 'إنشاء صفحة', title, req.session.adminName);
     res.redirect('/admin/pages');
   } catch (err) { console.error(err); res.redirect('/admin/pages'); }
 });
 router.post('/pages/:id/update', isAdmin, async (req, res) => {
   const { title, content, showInNav, showInFooter, active } = req.body;
-  await Page.findByIdAndUpdate(req.params.id, { title, content, showInNav: showInNav === 'on', showInFooter: showInFooter === 'on', active: active === 'on' });
+  const page = await Page.findByIdAndUpdate(req.params.id, { title, content, showInNav: showInNav === 'on', showInFooter: showInFooter === 'on', active: active === 'on' }, { new: true });
+
+  // تحديث النافبار والفوتر تلقائياً
+  if (page) {
+    const settings = await Settings.get();
+    const slug = page.slug;
+    if (showInNav === 'on') {
+      if (!settings.navLinks.find(l => l.page === 'page-' + slug)) {
+        settings.navLinks.push({ label: title, page: 'page-' + slug, url: '', order: settings.navLinks.length, visible: true });
+      }
+    } else {
+      settings.navLinks = settings.navLinks.filter(l => l.page !== 'page-' + slug);
+    }
+    if (showInFooter === 'on') {
+      if (!settings.footerLinks.find(l => l.page === 'page-' + slug)) {
+        settings.footerLinks.push({ label: title, page: 'page-' + slug, url: '', order: settings.footerLinks.length, visible: true });
+      }
+    } else {
+      settings.footerLinks = settings.footerLinks.filter(l => l.page !== 'page-' + slug);
+    }
+    await settings.save();
+  }
+
   res.redirect('/admin/pages');
 });
 router.post('/pages/:id/delete', isAdmin, async (req, res) => {
-  await Page.findByIdAndDelete(req.params.id);
+  const page = await Page.findById(req.params.id);
+  if (page) {
+    // حذف من النافبار والفوتر
+    const settings = await Settings.get();
+    settings.navLinks = settings.navLinks.filter(l => l.page !== 'page-' + page.slug);
+    settings.footerLinks = settings.footerLinks.filter(l => l.page !== 'page-' + page.slug);
+    await settings.save();
+    await Page.findByIdAndDelete(req.params.id);
+  }
   res.redirect('/admin/pages');
 });
 
