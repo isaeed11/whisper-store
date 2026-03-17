@@ -25,12 +25,15 @@
   <div class="nav-logo" onclick="navigateTo('home')"><% if (settings.logoType === 'image' && settings.logoImage) { %><img src="<%= settings.logoImage %>" alt="<%= settings.siteName %>" style="max-height:40px;"><% } else { %><%= settings.logoText || settings.siteName %><span><%= settings.siteTagline %></span><% } %></div>
   <div class="nav-links" id="navLinks">
     <% settings.navLinks.filter(l => l.visible).sort((a,b) => a.order - b.order).forEach(link => { %>
+      <% const internalPages = ['home','products','reviews','contact']; %>
       <% if (link.page === 'external' && link.url) { %>
         <a href="<%= link.url %>" target="_blank"><%= link.label %></a>
       <% } else if (link.page && link.page.startsWith('page-')) { %>
         <a href="/page/<%= link.page.replace('page-','') %>"><%= link.label %></a>
-      <% } else { %>
+      <% } else if (internalPages.includes(link.page)) { %>
         <a href="#" onclick="navigateTo('<%= link.page %>')" data-page="<%= link.page %>" class="<%= link.page === 'home' ? 'active' : '' %>"><%= link.label %></a>
+      <% } else { %>
+        <a href="/page/<%= link.page %>"><%= link.label %></a>
       <% } %>
     <% }) %>
   </div>
@@ -84,10 +87,9 @@
 <div class="page" id="page-contact"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ تواصل معنا</div><h2>نحب نسمع منك</h2></div><div class="contact-grid"><div class="contact-info reveal"><div class="contact-item"><div class="contact-icon">📍</div><div><h4>الموقع</h4><p><%= settings.address %></p></div></div><div class="contact-item"><div class="contact-icon">📱</div><div><h4>الجوال</h4><p style="direction:ltr;text-align:right;"><%= settings.phone %></p></div></div><div class="contact-item"><div class="contact-icon">✉️</div><div><h4>البريد</h4><p><%= settings.email %></p></div></div><div class="contact-item"><div class="contact-icon">🕐</div><div><h4>أوقات العمل</h4><p><%= settings.workingHours %></p></div></div><div class="contact-item"><div class="contact-icon">📸</div><div><h4>انستقرام</h4><p><%= settings.instagram %></p></div></div><% if (settings.whatsapp) { %><div class="contact-item"><div class="contact-icon">💬</div><div><h4>واتساب</h4><p style="direction:ltr;text-align:right;"><%= settings.whatsapp %></p></div></div><% } %></div><div class="contact-form reveal"><h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:24px;">أرسل لنا رسالة</h3><div class="form-group"><label>الاسم</label><input type="text" id="contactName" placeholder="اسمك"></div><div class="form-group"><label>الإيميل</label><input type="email" id="contactEmail" placeholder="email@example.com" style="direction:ltr;text-align:right;"></div><div class="form-group"><label>الجوال</label><input type="tel" id="contactPhone" placeholder="+966" style="direction:ltr;text-align:right;"></div><div class="form-group"><label>الموضوع</label><select id="contactSubject"><option value="">اختر</option><option>استفسار عن التأجير</option><option>طلب تسعيرة</option><option>مشكلة تقنية</option><option>اقتراح أو شكوى</option><option>أخرى</option></select></div><div class="form-group"><label>الرسالة</label><textarea id="contactMessage" placeholder="اكتب رسالتك..." rows="4"></textarea></div><button class="btn btn-primary btn-block" onclick="submitContact()">إرسال ←</button></div></div></section></div>
 
 <!-- ABOUT -->
-<% if (settings.aboutText) { %><div class="page" id="page-about"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ من نحن</div><h2>تعرّف على Whisper</h2></div><div style="max-width:800px;margin:0 auto;color:var(--text-dim);font-size:1rem;line-height:2;" class="reveal"><%- settings.aboutText.replace(/\n/g, '<br>') %></div></section></div><% } %>
 
 <!-- TERMS -->
-<% if (settings.termsText) { %><div class="page" id="page-terms"><section style="padding-top:120px;"><div class="section-header reveal"><div class="tag">✦ الشروط والأحكام</div><h2>شروط وأحكام الاستخدام</h2></div><div style="max-width:800px;margin:0 auto;color:var(--text-dim);font-size:1rem;line-height:2;" class="reveal"><%- settings.termsText.replace(/\n/g, '<br>') %></div></section></div><% } %>
+
 
 <div class="modal-overlay" id="bookingModal" onclick="if(event.target===this)closeBooking()"><div class="modal"><div class="modal-header"><h3>📅 حجز معدة</h3><button class="modal-close" onclick="closeBooking()">✕</button></div><div class="modal-body" id="bookingBody"></div></div></div>
 <div class="modal-overlay" id="checkoutModal" onclick="if(event.target===this)closeCheckout()"><div class="modal" style="max-width:560px;"><div class="modal-header"><h3>💳 إتمام الحجز</h3><button class="modal-close" onclick="closeCheckout()">✕</button></div><div class="modal-body" id="checkoutBody"></div></div></div>
@@ -97,12 +99,15 @@
   <% if (settings.footerDescription) { %><p style="color:var(--text-dim);font-size:.9rem;max-width:500px;margin:0 auto 16px;"><%= settings.footerDescription %></p><% } %>
   <div class="footer-links">
     <% settings.footerLinks.filter(l => l.visible).sort((a,b) => a.order - b.order).forEach(link => { %>
+      <% const internalPages = ['home','products','reviews','contact']; %>
       <% if (link.page === 'external' && link.url) { %>
         <a href="<%= link.url %>" target="_blank"><%= link.label %></a>
       <% } else if (link.page && link.page.startsWith('page-')) { %>
         <a href="/page/<%= link.page.replace('page-','') %>"><%= link.label %></a>
-      <% } else { %>
+      <% } else if (internalPages.includes(link.page)) { %>
         <a href="#" onclick="navigateTo('<%= link.page %>')"><%= link.label %></a>
+      <% } else { %>
+        <a href="/page/<%= link.page %>"><%= link.label %></a>
       <% } %>
     <% }) %>
   </div>
