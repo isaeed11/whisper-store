@@ -62,10 +62,8 @@
             <option value="products" <%= link.page === 'products' ? 'selected' : '' %>>المعدات</option>
             <option value="reviews" <%= link.page === 'reviews' ? 'selected' : '' %>>التقييمات</option>
             <option value="contact" <%= link.page === 'contact' ? 'selected' : '' %>>تواصل معنا</option>
-            <option value="about" <%= link.page === 'about' ? 'selected' : '' %>>من نحن</option>
-            <option value="terms" <%= link.page === 'terms' ? 'selected' : '' %>>الشروط والأحكام</option>
             <option value="external" <%= link.page === 'external' ? 'selected' : '' %>>رابط خارجي</option>
-            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>><%= p.title %></option><% }) %>
+            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>>📄 <%= p.title %></option><% }) %>
           </select>
           <input name="nav_url_<%= i %>" value="<%= link.url || '' %>" placeholder="رابط خارجي (اختياري)" style="direction:ltr;text-align:right;min-width:180px;">
           <div class="toggle"><input type="checkbox" name="nav_visible_<%= i %>" <%= link.visible ? 'checked' : '' %>><div class="toggle-track"></div></div>
@@ -99,10 +97,8 @@
             <option value="products" <%= link.page === 'products' ? 'selected' : '' %>>المعدات</option>
             <option value="reviews" <%= link.page === 'reviews' ? 'selected' : '' %>>التقييمات</option>
             <option value="contact" <%= link.page === 'contact' ? 'selected' : '' %>>تواصل معنا</option>
-            <option value="about" <%= link.page === 'about' ? 'selected' : '' %>>من نحن</option>
-            <option value="terms" <%= link.page === 'terms' ? 'selected' : '' %>>الشروط والأحكام</option>
             <option value="external" <%= link.page === 'external' ? 'selected' : '' %>>رابط خارجي</option>
-            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>><%= p.title %></option><% }) %>
+            <% pages.forEach(p => { %><option value="page-<%= p.slug %>" <%= link.page === 'page-' + p.slug ? 'selected' : '' %>>📄 <%= p.title %></option><% }) %>
           </select>
           <input name="footer_url_<%= i %>" value="<%= link.url || '' %>" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;">
           <div class="toggle"><input type="checkbox" name="footer_visible_<%= i %>" <%= link.visible ? 'checked' : '' %>><div class="toggle-track"></div></div>
@@ -141,13 +137,13 @@ let footerCount = <%= settings.footerLinks.length %>;
 function addNavLink() {
   const c = document.getElementById('navLinksContainer');
   const i = navCount++;
-  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="nav_label_${i}" placeholder="اسم الرابط"><select name="nav_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="about">من نحن</option><option value="terms">الشروط</option><option value="external">رابط خارجي</option></select><input name="nav_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="nav_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
+  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="nav_label_${i}" placeholder="اسم الرابط"><select name="nav_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="external">رابط خارجي</option></select><input name="nav_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="nav_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
   document.getElementById('navLinksCount').value = navCount;
 }
 function addFooterLink() {
   const c = document.getElementById('footerLinksContainer');
   const i = footerCount++;
-  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="footer_label_${i}" placeholder="اسم الرابط"><select name="footer_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="about">من نحن</option><option value="terms">الشروط</option><option value="external">رابط خارجي</option></select><input name="footer_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="footer_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
+  c.insertAdjacentHTML('beforeend', `<div class="link-row"><span class="drag-handle">⋮⋮</span><input name="footer_label_${i}" placeholder="اسم الرابط"><select name="footer_page_${i}"><option value="home">الرئيسية</option><option value="products">المعدات</option><option value="reviews">التقييمات</option><option value="contact">تواصل معنا</option><option value="external">رابط خارجي</option></select><input name="footer_url_${i}" placeholder="رابط خارجي" style="direction:ltr;text-align:right;min-width:180px;"><div class="toggle"><input type="checkbox" name="footer_visible_${i}" checked><div class="toggle-track"></div></div></div>`);
   document.getElementById('footerLinksCount').value = footerCount;
 }
 </script>
