@@ -289,7 +289,7 @@ router.post('/appearance', isAdmin, async (req, res) => {
     // حفظ روابط النافبار
     const navCount = parseInt(req.body.navLinksCount) || 0;
     settings.navLinks = [];
-    for (let i = 0; i < navCount + 10; i++) {
+    for (let i = 0; i < navCount; i++) {
       if (req.body[`nav_label_${i}`]) {
         settings.navLinks.push({
           label: req.body[`nav_label_${i}`],
@@ -304,7 +304,7 @@ router.post('/appearance', isAdmin, async (req, res) => {
     // حفظ روابط الفوتر
     const footerCount = parseInt(req.body.footerLinksCount) || 0;
     settings.footerLinks = [];
-    for (let i = 0; i < footerCount + 10; i++) {
+    for (let i = 0; i < footerCount; i++) {
       if (req.body[`footer_label_${i}`]) {
         settings.footerLinks.push({
           label: req.body[`footer_label_${i}`],
